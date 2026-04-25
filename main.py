@@ -11,13 +11,13 @@ from speed_and_distance_estimator import SpeedAndDistance_Estimator
 
 def main():
     # ── 1. Lecture de la vidéo ────────────────────────────────────────────────
-    video_frames = read_video('input_videos/08fd33_4.mp4')
+    video_frames = read_video('input_videos/match_quartier.mp4')
 
     # ── 2. Tracking ───────────────────────────────────────────────────────────
     tracker = Tracker('models/best.pt')
     tracks = tracker.get_object_tracks(
         video_frames,
-        read_from_stub=True,
+        read_from_stub=False,
         stub_path='stubs/track_stubs.pkl'
     )
     tracker.add_position_to_tracks(tracks)
@@ -26,7 +26,7 @@ def main():
     camera_movement_estimator = CameraMovementEstimator(video_frames[0])
     camera_movement_per_frame = camera_movement_estimator.get_camera_movement(
         video_frames,
-        read_from_stub=True,
+        read_from_stub=False,
         stub_path='stubs/camera_movement_stub.pkl'
     )
     camera_movement_estimator.add_adjust_positions_to_tracks(tracks, camera_movement_per_frame)
@@ -134,7 +134,7 @@ def main():
         player_stats = player_assigner.player_stats,
         tracks       = tracks,
         output_path  = 'output_videos/player_stats.json',
-        video_source = 'input_videos/08fd33_4.mp4',
+        video_source = 'input_videos/match_quartier.mp4',
     )
 
     # ── 9. Rendu vidéo ────────────────────────────────────────────────────────
