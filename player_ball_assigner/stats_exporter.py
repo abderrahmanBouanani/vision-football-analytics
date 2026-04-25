@@ -10,7 +10,7 @@ Et exporte un fichier JSON structuré par player_id.
 Format de sortie :
 {
   "generated_at": "2026-04-25T16:20:00",
-  "video_source":  "08fd33_4.mp4",
+  "video_source":  "match_quartier.mp4",
   "total_frames":  751,
   "players": {
     "7": {
@@ -30,7 +30,19 @@ Format de sortie :
 """
 
 import json
+import numpy as np
 from datetime import datetime
+
+
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)
 
 
 # ── Agrégation vitesse/distance depuis les tracks ─────────────────────────────
@@ -130,7 +142,7 @@ def export_stats_to_json(
     }
 
     with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(output, f, indent=2, ensure_ascii=False)
+        json.dump(output, f, indent=2, ensure_ascii=False, cls=NpEncoder)
 
     print(f"\n[EXPORT] Statistiques écrites dans : {output_path}")
     print(f"         {len(players_output)} joueurs | {total_frames} frames analysées")
